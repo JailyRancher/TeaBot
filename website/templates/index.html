@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>TeaBot</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script
+	src="http://www.mintertweed.com/wp-content/themes/starkers/js/flipclock/libs/prefixfree.min.js"></script>
+<script
+	src="http://www.mintertweed.com/wp-content/themes/starkers/js/flipclock/flipclock.min.js"></script>
+<link rel="stylesheet" href="/static/css/flipclock.css">
+<link rel="stylesheet" href="/static/css/flipclock.scss">
+
+<script src="/static/js/flipclock.min.js"></script>
+<link href="/static/css/carousel.css" rel="stylesheet">
+<script src="/static/js/jquery.js"></script>
+
+<script type=text/javascript>
+    $(function() {
+      $('a#calculate').bind('click', function() {
+        $.getJSON('/_add_numbers', {
+          a: $('input[name="a"]').val(),
+          b: $('input[name="b"]').val()
+        }, function(data) {
+          $("#result").text(data.result);
+        });
+        return false;
+      });
+    });
+  </script>
+
+
+</head>
+
+<!-- NAVBAR
+================================================== -->
+<body>
+	<div class="navbar-wrapper">
+		<div class="container">
+			<nav class="navbar navbar-inverse navbar-static-top">
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed"
+							data-toggle="collapse" data-target="#navbar"
+							aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span> <span
+								class="icon-bar"></span> <span class="icon-bar"></span> <span
+								class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="">TeaBot</a>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="#">Home</a></li>
+							<li><a href="#timer">Timer and Temperature</a></li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+
+		</div>
+	</div>
+	
+
+	<!-- Header
+    ================================================== -->
+	<div id="myCarousel" class="carousel slide" data-ride="carousel">
+		<!-- Indicators -->
+		<div class="carousel-inner" role="listbox">
+			<div class="item active">
+				<img class="first-slide"
+					src="https://www.teaneeds.com/glassteapots/GrabNGoBrewers.jpg"
+					alt="First slide">
+				<div class="container">
+					<div class="carousel-caption">
+						<h1>Project in Collaboration with CS431</h1>
+						<br> <br>
+					</div>
+				</div>
+			</div>
+			<a class="left carousel-control" href="#myCarousel"> <span
+				class="sr-only">Previous</span>
+			</a> <a class="right carousel-control" href="#myCarousel"> <span
+				class="sr-only">Next</span>
+			</a>
+		</div>
+	</div>
+	<!-- /.carousel -->
+
+	<hr class="featurette-divider">
+	<!-- Features
+    ================================================== -->
+	<!-- Wrap the rest of the page in another container to center all the content. -->
+	
+	<div id="timer" class="container marketing">
+		<!-- START THE FEATURETTES -->
+
+		<div class="row featurette">
+			<div class="col-md-6">
+				<h2 class="featurette-heading">Tea Timer</h2>
+				<p class="lead">***Add Form To Change Timer***</p>
+				<div class="col-md-5">
+
+					<!-- Start of Clock Timer 
+					***3600 = 60 minutes
+					***360 = 6 minutes
+					***30 = 30 seconds
+					***everything by seconds
+					=================================================-->
+					<div class="container">
+						<div class="row>">
+							<div class="clock"></div>
+							<script>
+								var clock = $('.clock').FlipClock({{ time }}, {
+									countdown : true,
+									clockFace : 'MinuteCounter',
+								});
+							</script>
+				
+                                                        <form action="timeset" method="post">
+                                                                <input name="timeset">
+                                                                <button>Submit</button>
+                                                        </form>
+							<p>Set Time</p>
+							</script>
+							<form action="send" method="post">
+								<input name="inputMessage">
+								<button>Submit</button>
+							</form>
+							<p>Send to Arduino</p>
+{{ message }}						
+							<script type="text/javascript">
+							    var mydata;
+							    function getArduinoVal(){
+							    	$.getJSON('/arduino/', function(data){
+								    $('#vals').html(data.val);
+								    print(data)	;
+								    print(vals);
+								    mydata = data;
+								};
+								t = setTimeout("getArduinoVals()",10000);
+							    }
+							    getArduinoVal();
+							    print(data);
+							    print data;	
+							</script>
+							<div id="vals">
+                                                        </div>	
+							<ul> {% for item in message %}
+								<li>{{ item }}</li>
+							     {% endfor %}
+							</ul>
+						</div>
+					</div>
+					<!-- End of Clock Timer -->
+				</div>
+			</div>
+		
+
+			<div class="col-md-6">
+				<h2 class="featurette-heading">Tea Temperature</h2>
+				<p class="lead">***Display Temperature Output from Heat
+					Immersion***</p>
+			</div>
+			<div id='vals'> </div>
+			<script type = "text/javascript">
+				var allVals = [];
+				function getArduinoVals(){	
+				
+					$.getJSON('/arduino/', function(data){
+						
+					$('#vals').html(data.val);			
+						});
+			 	
+			//	$('<div>', {'id' : 'val', html : a.responseText}).appendTo('#vals');
+						
+				t = setTimeout("getArduinoVals()",500); //second argument is the milliseconds delay
+			}	
+	
+			getArduinoVals();
+
+		</script>
+		</div>
+		
+	<hr class="featurette-divider">
+	
+
+	<!-- /END THE FEATURETTES -->
+
+
+	<!-- FOOTER -->
+	<footer>
+		<p class="pull-right">
+			<a href="#">Back to top</a>
+		</p>
+		<p>
+			&copy; 2015 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a
+				href="#">Terms</a>
+		</p>
+		<p>Sam Du &middot; Jaily Zeng &middot; Raspberry Pi</p>
+	</footer>
+	</div>
+</body>
+</html>
