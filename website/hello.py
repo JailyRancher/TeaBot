@@ -2,7 +2,8 @@ from flask import Flask, render_template, jsonify, request
 from flask import redirect, url_for
 import serial
 
-ser = serial.Serial('/dev/ttyACM1', 9600)
+#ser = serial.Serial('/dev/ttyACM0', 9600)
+ser = serial.Serial('/dev/tty.usbmodem1421', 9600)
 
 app = Flask(__name__)
 message = ""
@@ -13,7 +14,7 @@ time = ""
 # The time variable sets the clock initally to 0, which displays the clock on the page
 @app.route('/')
 def index():
-    return render_template('index.html', time=0)
+    return render_template('index.html', time=0, totaltime=0)
 
 
 # This route will take in an input message and parse the timer from it
@@ -26,10 +27,15 @@ def send():
     temp = str(request.form['inputMessage'])
     boilingtime = temp[1:-3]
     teatime = temp[4:]
-    boilingtime = int(boilingtime)
+    boilingtime = int(boilingtime) + 1
+    teatime = int(teatime)
     message = request.form['inputMessage']
-    ser.write(message)
-    return render_template('index.html', time=boilingtime, message=message)
+    totalTime = boilingtime + teatime + 60 + 5
+    for index in temp:
+        ser.write(index)
+    #ser.write(message)
+
+    return render_template('index.html', time=boilingtime, message=message, totaltime=totalTime)
 
 # For testing purposes
 # Test run without the Arduino
@@ -41,9 +47,12 @@ def timeset():
     teatime = temp[4:]
     boilingtime = int(boilingtime)
     teatime = int(teatime)
+    totalTime = boilingtime + teatime + 60 + 20
+    for index in temp:
+        print index
     print boilingtime
     print teatime
-    return render_template('index.html', time=boilingtime, message=temp)
+    return render_template('index.html', time=boilingtime, message=temp, totaltime=totalTime)
 
 
 # AJAX Call method
@@ -54,8 +63,6 @@ def readArduino():
     d = {}
     d['val'] = message
     return jsonify(**d)
-
-
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
