@@ -41,15 +41,15 @@ def timeset():
     print time
     return render_template('index.html', time=time, message=message)
 
-# AJAX Call method - Still in Progress
+
+# AJAX Call method
+# Reads in message sent from Arduino and returns it to index.html
 @app.route('/arduino/')
 def readArduino():
     message=ser.readline()
     d = {}
     d['val'] = message
-    return d
+    return jsonify(**d)
 
 if __name__=="__main__":
     app.run(host='0.0.0.0', port=80, debug=True)
-	
-
