@@ -43,7 +43,7 @@
 					<div id="navbar" class="navbar-collapse collapse">
 						<ul class="nav navbar-nav">
 							<li class="active"><a href="#">Home</a></li>
-							<li><a href="#timer">Timer and Temperature</a></li>
+							<li><a href="#timer">Timer and Status</a></li>
 						</ul>
 					</div>
 				</div>
@@ -101,19 +101,21 @@
 					<div class="container">
 						<div class="row>">
 							<div class="clock"></div>
+							
 							<script>
 								var clock = $('.clock').FlipClock({{ time }}, {
 									countdown : true,
 									clockFace : 'MinuteCounter',
 								});
 							</script>
-				
-                                                        <form action="timeset" method="post">
-                                                                <input name="timeset">
-                                                                <button>Submit</button>
-                                                        </form>
+							
+							<form action="timeset" method="post">
+								<input name="timeset">
+								<button>Submit</button>
+                            </form>
+
 							<p>Set Time</p>
-							</script>
+{{message}}							
 							<form action="send" method="post">
 								<input name="inputMessage">
 								<button>Submit</button>
