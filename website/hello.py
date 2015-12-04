@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify, request
 from flask import redirect, url_for
 import serial
 
-#ser = serial.Serial('/dev/ttyACM0', 9600)
+#ser = serial.Serial('/dev/ttyACM0', 9600) #raspberry pi USB serial input
 ser = serial.Serial('/dev/tty.usbmodem1421', 9600)
 
 app = Flask(__name__)
@@ -21,23 +21,28 @@ def index():
 # Message format: B000000
 # The first three numbers are boiling time
 # Second three numbers are tea time 
+# Serial write can only write size 1 byte at a given time
 @app.route('/send', methods=['POST'])
 def send():
     temp = []
     temp = str(request.form['inputMessage'])
+    message = request.form['inputMessage']
     boilingtime = temp[1:-3]
     teatime = temp[4:]
+
     boilingtime = int(boilingtime) + 1
     teatime = int(teatime)
-    message = request.form['inputMessage']
-    totalTime = boilingtime + teatime + 60 + 5
+    cooling_time = 60
+    servo_moving_time = 5
+    totalTime = boilingtime + teatime + cooling_time + servo_moving_time
+
     for index in temp:
         ser.write(index)
     #ser.write(message)
 
     return render_template('index.html', time=boilingtime, message=message, totaltime=totalTime)
 
-# For testing purposes
+# For testing purposes when Arduino is not connected
 # Test run without the Arduino
 @app.route('/timeset', methods=['POST'])
 def timeset():
@@ -50,8 +55,8 @@ def timeset():
     totalTime = boilingtime + teatime + 60 + 20
     for index in temp:
         print index
-    print boilingtime
-    print teatime
+    #print boilingtime
+    #print teatime
     return render_template('index.html', time=boilingtime, message=temp, totaltime=totalTime)
 
 
