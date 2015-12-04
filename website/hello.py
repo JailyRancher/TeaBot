@@ -1,8 +1,8 @@
 from flask import Flask, render_template, jsonify, request
 from flask import redirect, url_for
-#import serial
+import serial
 
-#ser = serial.Serial('/dev/ttyACM1', 9600)
+ser = serial.Serial('/dev/ttyACM1', 9600)
 
 app = Flask(__name__)
 message = ""
@@ -28,8 +28,8 @@ def send():
     teatime = temp[4:]
     boilingtime = int(boilingtime)
     message = request.form['inputMessage']
-#    ser.write(message)
-    return render_template('index.html', time=boilingtime)
+    ser.write(message)
+    return render_template('index.html', time=boilingtime, message=message)
 
 # For testing purposes
 # Test run without the Arduino
@@ -50,11 +50,11 @@ def timeset():
 # Reads in message sent from Arduino and returns it to index.html
 @app.route('/arduino/')
 def readArduino():
-#    message=ser.readline()
-#    d = {}
-#    d['val'] = message
-#    return jsonify(**d)
-    return "Hello"
+    message=ser.readline()
+    d = {}
+    d['val'] = message
+    return jsonify(**d)
+
 
 
 if __name__=="__main__":
